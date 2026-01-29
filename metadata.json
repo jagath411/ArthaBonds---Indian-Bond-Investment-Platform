@@ -1,0 +1,7 @@
+{
+  "name": "ArthaBonds - Indian Bond Investment Platform",
+  "description": "A premium, fintech-grade platform for investing in Indian Government Bonds, Corporate Bonds, and FDs. Features goal-based Bond Buckets, unified tracking, and AI-powered insights.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
