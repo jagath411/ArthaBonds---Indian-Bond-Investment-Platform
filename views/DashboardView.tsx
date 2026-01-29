@@ -1,35 +1,48 @@
 
 import React, { useEffect, useState } from 'react';
-import { Plus, Bell, ShieldCheck, ChevronRight, Sparkles } from 'lucide-react';
+import { Plus, Bell, ShieldCheck, ChevronRight, Sparkles, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PortfolioCard from '../components/PortfolioCard';
 import { MOCK_BUCKETS } from '../constants';
 import { getMarketOutlook } from '../services/geminiService';
 
-const DashboardView: React.FC = () => {
-  const [outlook, setOutlook] = useState<string>('Loading market intelligence...');
+interface DashboardViewProps {
+  user: any;
+}
+
+const DashboardView: React.FC<DashboardViewProps> = ({ user }) => {
+  const [outlook, setOutlook] = useState<{text: string, sources: any[]}>({
+    text: 'Loading market intelligence...',
+    sources: []
+  });
 
   useEffect(() => {
     const fetchOutlook = async () => {
-      const text = await getMarketOutlook();
-      setOutlook(text);
+      const result = await getMarketOutlook();
+      setOutlook(result);
     };
     fetchOutlook();
   }, []);
+
+  const firstName = user?.given_name || user?.name?.split(' ')[0] || 'Artha';
 
   return (
     <div className="p-6 pt-12 animate-in fade-in duration-700">
       <header className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Namaste, Artha</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Namaste, {firstName}</h1>
           <p className="text-zinc-500 text-sm">Your fixed income is growing.</p>
         </div>
         <div className="flex space-x-3">
           <button className="p-2.5 glass-card rounded-full text-zinc-400 hover:text-white transition-colors">
             <Bell size={20} />
           </button>
-          <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-            <span className="text-indigo-400 font-bold">A</span>
+          <div className="w-10 h-10 rounded-full bg-indigo-500/20 overflow-hidden border border-indigo-500/30 flex items-center justify-center">
+            {user?.picture ? (
+              <img src={user.picture} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-indigo-400 font-bold">{firstName[0]}</span>
+            )}
           </div>
         </div>
       </header>
@@ -62,25 +75,28 @@ const DashboardView: React.FC = () => {
               </div>
             </div>
           ))}
-          <button className="w-full py-4 border-2 border-dashed border-white/10 rounded-2xl text-zinc-500 text-sm font-medium flex items-center justify-center space-x-2 hover:border-indigo-500/40 hover:text-indigo-400 transition-all">
-            <Plus size={18} />
-            <span>Create New Bucket</span>
-          </button>
         </div>
       </section>
 
       <section className="mb-4">
         <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-3 opacity-10">
-            <Sparkles size={60} />
-          </div>
           <div className="flex items-center space-x-2 mb-3">
             <Sparkles size={16} className="text-indigo-400" />
-            <h4 className="text-xs font-bold uppercase tracking-widest text-indigo-400">AI Market Intelligence</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-indigo-400">Live Market Outlook</h4>
           </div>
-          <p className="text-sm text-zinc-300 leading-relaxed italic">
-            "{outlook}"
+          <p className="text-sm text-zinc-300 leading-relaxed italic mb-3">
+            "{outlook.text}"
           </p>
+          {outlook.sources.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {outlook.sources.map((s, idx) => (
+                <a key={idx} href={s.uri} target="_blank" rel="noopener noreferrer" className="text-[9px] bg-white/5 px-2 py-1 rounded flex items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+                  <ExternalLink size={10} />
+                  {s.title.substring(0, 20)}...
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -88,7 +104,7 @@ const DashboardView: React.FC = () => {
         <div className="flex items-center space-x-3 text-zinc-500 bg-white/5 p-4 rounded-2xl border border-white/5">
           <ShieldCheck size={20} className="text-emerald-500" />
           <p className="text-[11px] leading-snug">
-            ArthaBonds is AMFI-registered and uses bank-grade 256-bit encryption for all transactions. Your assets are held in your own Demat account.
+            ArthaBonds is AMFI-registered. Your data is synced in real-time with your Demat provider.
           </p>
         </div>
       </section>

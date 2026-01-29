@@ -7,6 +7,7 @@
     <title>ArthaBonds | Premium Fixed Income Investing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -28,6 +29,13 @@
         background: #333;
         border-radius: 10px;
       }
+      .mesh-gradient {
+        background-color: #0a0a0a;
+        background-image: 
+          radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+          radial-gradient(at 50% 0%, hsla(225,39%,30%,0.15) 0, transparent 50%), 
+          radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+      }
     </style>
   <script type="importmap">
 {
@@ -43,7 +51,7 @@
 }
 </script>
 </head>
-  <body>
+  <body class="mesh-gradient">
     <div id="root"></div>
   </body>
 </html>

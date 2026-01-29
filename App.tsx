@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Search, 
@@ -19,6 +19,7 @@ import BucketsView from './views/BucketsView';
 import ProfileView from './views/ProfileView';
 import DocsView from './views/DocsView';
 import BondDetailView from './views/BondDetailView';
+import LoginView from './views/LoginView';
 
 const Navigation = () => {
   const location = useLocation();
@@ -54,12 +55,28 @@ const Navigation = () => {
 
 const App: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Simulate initial loading
+    // Check for existing session
+    const savedUser = localStorage.getItem('arthabonds_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
     const timer = setTimeout(() => setIsLoaded(true), 1200);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleLogin = (userData: any) => {
+    setUser(userData);
+    localStorage.setItem('arthabonds_user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('arthabonds_user');
+  };
 
   if (!isLoaded) {
     return (
@@ -71,18 +88,21 @@ const App: React.FC = () => {
     );
   }
 
+  if (!user) {
+    return <LoginView onLogin={handleLogin} />;
+  }
+
   return (
     <Router>
       <div className="min-h-screen pb-24 max-w-lg mx-auto bg-[#0a0a0a] text-zinc-100 relative shadow-2xl overflow-x-hidden">
-        {/* Header (Dynamic based on route could go here) */}
-        
         <Routes>
-          <Route path="/" element={<DashboardView />} />
+          <Route path="/" element={<DashboardView user={user} />} />
           <Route path="/discover" element={<DiscoverView />} />
           <Route path="/bond/:id" element={<BondDetailView />} />
           <Route path="/buckets" element={<BucketsView />} />
           <Route path="/docs" element={<DocsView />} />
-          <Route path="/profile" element={<ProfileView />} />
+          <Route path="/profile" element={<ProfileView user={user} onLogout={handleLogout} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         <Navigation />

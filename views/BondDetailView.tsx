@@ -1,6 +1,6 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// Fix: Added Plus to the lucide-react imports to resolve 'Cannot find name Plus' on line 92
 import { ChevronLeft, ShieldCheck, Calendar, Info, Share2, Sparkles, ShoppingCart, Plus } from 'lucide-react';
 import { MOCK_BONDS } from '../constants';
 import { getBondInsight } from '../services/geminiService';
@@ -14,8 +14,8 @@ const BondDetailView: React.FC = () => {
   useEffect(() => {
     if (bond) {
       const fetchInsight = async () => {
-        const text = await getBondInsight(bond.name, bond.issuer, bond.ytm);
-        setInsight(text);
+        const result = await getBondInsight(bond.name, bond.issuer, bond.ytm);
+        setInsight(result.text);
       };
       fetchInsight();
     }
